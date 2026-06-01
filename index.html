@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>FIT2179 - Data Vis 2</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff4e7;
+            color: #000000;
+            line-height: 1.4;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-align: center;
+            margin: 0 0 0.5rem 0;
+            color: #1e293b;
+        }
+
+        .intro-text {
+            max-width: 900px;
+            margin: 0 auto 1rem auto;
+            text-align: center;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #475569;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin: 16px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+            padding-left: 12px;
+            border-left: 4px solid #2563eb;
+        }
+
+        .chart-caption {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #000000;
+            margin-top: 10px;
+            max-width: 100%;
+        }
+
+        .source {
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: #64748b;
+            font-style: italic;
+        }
+        .source a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        .source a:hover {
+            text-decoration: underline;
+        }
+
+        .vega-embed {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: -10px;
+        }
+        .vega-embed summary {
+            display: none;
+        }
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1.6fr 0.9fr;
+            gap: 20px;
+            margin: 16px 0;
+        }
+        .two-columns .chart-container {
+            margin: 0;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                padding: 12px;
+            }
+            .two-columns {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .chart-title {
+                font-size: 1.1rem;
+            }
+        }
+
+        #vg-tooltip-element {
+            font-family: system-ui, sans-serif !important;
+            font-size: 0.85rem !important;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 12px;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Australia's Changing Picture of Physical Activity Across Generations</h1>
+    <p class="intro-text">
+        We know exercise is good for us. Yet across Australia, our daily habits are shifting – more screen time, more sitting, and for many, less movement. 
+        This visualisation explores how physical activity has changed over the years, who is still moving, and who is falling behind. 
+        The consequences matter: inactivity contributes to chronic disease, mental health challenges, and a heavier burden on our healthcare system.
+    </p>
+    
+    <div class="two-columns">
+        <!-- 1. Map -->
+        <div class="chart-container">
+            <div class="chart-title">1. Meeting guidelines by state (2022)</div>
+            <div id="chart-map"></div>
+            <div class="chart-caption">Using 2022 ABS National Health Survey data, this choropleth map shows the percentage of adults aged 15+ in each state and territory who met physical activity guidelines. Darker red indicates higher adherence. The task is to compare geographic variation. Victoria has the highest rate (19.7%), while Northern Territory is lowest (14.16%). However, all states sit below 20%, revealing a nationwide challenge. The map encodes population‑proportional activity, allowing policymakers to target regions with the greatest need.</div>
+            <div class="source">
+                Source: <a href="https://www.abs.gov.au/statistics/health/health-conditions-and-risks/national-health-survey-state-and-territory-findings/latest-release" target="_blank">ABS (2022)</a>
+            </div>
+        </div>
+
+        <!-- 2. Guidelines by age -->
+        <div class="chart-container">
+            <div class="chart-title">2. Who fails to meet guidelines?</div>
+            <div id="chart-guidelines"></div>
+            <div class="chart-caption">Data from ABS surveys (2011‑12 and 2022) tracks the percentage of Australians not meeting physical activity guidelines across age groups. This line chart reveals a shocking peak: 89% of 13–14 year olds are insufficiently active, the highest of any age group. Inactivity then declines slightly but remains above 78% for adults. The visualisation makes the task of identifying the most vulnerable life stage immediate – early adolescence. It also shows that despite some improvement in adulthood, the majority of all age groups fail to meet recommendations, pointing to a systemic behaviour problem.</div>
+            <div class="source">
+                Source: <a href="https://www.aihw.gov.au/reports/physical-activity/physical-activity#guidelines" target="_blank">AIHW (2024)</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Sedentary trends -->
+    <div class="chart-container">
+        <div class="chart-title">3. Sedentary Behaviour Over Time</div>
+        <div id="chart-sedentary"></div>
+        <div class="chart-caption">Using ABS time‑use data from 2007‑08, 2011‑12 and 2014‑15, this multi‑line chart tracks three types of sitting: occupational (>4h/day), leisure (>4h/day), and combined (>7h/day). Combined sedentary behaviour increased from 54.3% to 56.2% over the period, while occupational sitting remained stubbornly above 50%. Observing the trend, it's clear that Australians are not sitting less, and if anything, total sitting has risen. The idiom (lines with points) makes the direction of each behaviour clear, highlighting that leisure sitting increased the most.</div>
+        <div class="source">
+            Source: <a href="https://www.obesityevidencehub.org.au/collections/trends/adults-diet-exercise" target="_blank">Obesity Evidence Hub</a>
+        </div>
+    </div>
+
+    <!-- 4. Free time by sex -->
+    <div class="chart-container">
+        <div class="chart-title">4. Free‑time Activities: Male vs Female</div>
+        <div id="chart-activities"></div>
+        <div class="chart-caption">ABS Time Use data shows how men and women spend their leisure time. This grouped bar chart compares participation rates. The striking insight is that the most popular activities (watching TV and using the internet) are all sedentary. Walking for exercise (a physical activity) is relatively low (around 14‑15%). The task is to see which free‑time behaviours dominate, and the visualisation clearly shows that screen‑based and passive leisure far outweigh active movement. Gender differences exist (such as, women read more, men use electronics more), but the overall pattern is one of sedentary recreation.</div>
+        <div class="source">
+            Source: <a href="https://www.abs.gov.au/articles/how-australian-generations-spent-their-time-recreation-and-leisure" target="_blank">ABS Time Use Analysis</a>
+        </div>
+    </div>
+
+    <!-- 5 + 6 side by side (TV slope + kids screen) -->
+    <div class="two-columns">
+        <div class="chart-container">
+            <div class="chart-title">5. TV Viewing: Generations Diverge</div>
+            <div id="chart-tv-slope"></div>
+            <div class="chart-caption">This slope graph compares daily TV hours for older adults (65+) and young adults (18‑29) across two time points. Older adults increased TV time from 3.2 to 5.0 hours (+56%), while young adults reduced from 2.1 to 1.8 hours. The task is to compare the magnitude and direction of change. However, young adults’ decline in TV does not mean they are more active – they have shifted to online video and social media. The slope graph shows generational divergence, but the caption reminds the viewer that screen time has not disappeared, it has simply changed form.</div>
+            <div class="source">
+                Source: <a href="https://www.abs.gov.au/articles/how-australian-generations-spent-their-time-recreation-and-leisure" target="_blank">ABS Time Use Analysis</a>
+            </div>
+        </div>
+        <div class="chart-container">
+            <div class="chart-title">6. Children Aged 5‑17 Exceeding Screen Limits</div>
+            <div id="chart-kids-screen"></div>
+            <div class="chart-caption">This pie chart uses AIHW data to show that only 29% of children aged 5‑17 meet daily screen‑time recommendations, leaving a staggering 71% exceeding limits. At first glance, the red majority is immediately visible. Together with Chart 5, this reveals a worrying trend: while young adults watch less TV, children are still over‑exposed to screens, setting the stage for future sedentary habits.</div>
+            <div class="source">
+                Source: <a href="https://www.aihw.gov.au/reports/children-youth/australias-children/contents/health/physical-activity" target="_blank">AIHW Australia's Children</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="two-columns">
+        <!-- 7. Work activity -->
+        <div class="chart-container">
+            <div class="chart-title">7. Workday Activity by Age</div>
+            <div id="chart-work"></div>
+            <div class="chart-caption">ABS 2022 data shows the composition of workday physical activity for employed adults. This normalised stacked bar chart reveals that sitting dominates from age 25 onward, with over 50% of workers in each middle‑age group reporting mostly sitting. Young adults (18‑24) have a more balanced mix (sitting 23%, walking 33%, heavy labour 17%). It becomes apparent that work grows increasingly sedentary as people age. The stacked bars make it easy to compare proportions – a clear decline in walking and heavy labour after 25, and a rise in sitting that never falls below 50% for those aged 25+.</div>
+            <div class="source">
+                Source: <a href="https://www.abs.gov.au/statistics/health/health-conditions-and-risks/physical-activity/latest-release" target="_blank">ABS Physical Activity (2022)</a>
+            </div>
+        </div>
+
+        <!-- 8. Barriers -->
+        <div class="chart-container">
+            <div class="chart-title">8. Barriers: Women vs Men</div>
+            <div id="chart-barriers-diff"></div>
+            <div class="chart-caption">This diverging bar chart shows the percentage‑point difference between female and male reporting of barriers to physical activity among inactive Australian adults. Positive bars (orange) mean women cite the barrier more often, while negative (blue) means men cite it more. Women are disproportionately affected by ‘lack of enjoyment’ (+10%), ‘prefer other things’ (+9.8%) and ‘lack of time’ (+7.1%). Only ‘lack of confidence’ is slightly higher in men (-2.9%). The visualisation helps target interventions. That is, for women, addressing enjoyment and time constraints is key, and for men, confidence building may be more effective.</div>
+            <div class="source">
+                Source: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5968958/" target="_blank">Burton et al. (2018)</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9 + 10 side by side (disease burden + impact) -->
+    <div class="two-columns">
+        <div class="chart-container">
+            <div class="chart-title">9. Diseases Linked to Inactivity</div>
+            <div id="chart-burden"></div>
+            <div class="chart-caption">AIHW 2018 data ranks diseases by the percentage of their total burden that is attributable to physical inactivity. This horizontal bar chart shows that type 2 diabetes has the highest link (20%), followed by coronary heart disease (16%) and uterine cancer (16%). The visualisation makes it clear that inactivity is not just a lifestyle issue, but it directly drives Australia’s most prevalent chronic conditions.</div>
+            <div class="source">
+                Source: <a href="https://www.aihw.gov.au/reports/physical-activity/physical-activity#guidelines" target="_blank">AIHW (2024)</a>
+            </div>
+        </div>
+        <div class="chart-container">
+            <div class="chart-title">10. Preventable Burden: 10% Reduction in Inactivity</div>
+            <div id="chart-impact"></div>
+            <div class="chart-caption">Modelled estimates show the annual health burden from physical inactivity and the impact of a 10% reduction in inactivity prevalence. This grouped bar chart compares current levels (orange) with the preventable portion (green). A 10% reduction would prevent 6,000 new disease cases (13% reduction), 2,000 deaths (15%), and 25,000 DALYs (Disability-adjusted life year) (14%). The visualisation showcases that achievable changes in population activity would save thousands of lives and reduce healthcare costs dramatically.</div>
+            <div class="source">
+                Source: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3192710/" target="_blank">Cadilhac et al. (2011)</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>Visualisation created using data from ABS, AIHW, Obesity Evidence Hub, and peer-reviewed research.</footer>
+
+    <script>
+        
+        const mapSpec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "width": 500,
+            "height": 380,
+            "projection": { "type": "mercator" },
+            "data": {
+                "url": "https://raw.githubusercontent.com/Nicoletta-111/Data-Visualisation-2/refs/heads/main/Aus_states_active.csv",
+                "format": { "type": "csv" }
+            },
+            "transform": [
+                {
+                    "lookup": "state_code",
+                    "from": {
+                        "data": {
+                            "url": "https://raw.githubusercontent.com/alwaysblazing/Australia-State-TopoJson-MapChart/cb96da82eee17bef28ad09ffd9a5463aa6782d2d/au-states-topo.json",
+                            "format": { "type": "topojson", "feature": "austates" }
+                        },
+                        "key": "id"
+                    },
+                    "as": "geo"
+                }
+            ],
+            "mark": { "type": "geoshape", "stroke": "black", "strokeWidth": 1 },
+            "encoding": {
+                "shape": { "field": "geo", "type": "geojson" },
+                "color": {
+                    "field": "activity_rate",
+                    "type": "quantitative",
+                    "title": "Meeting guidelines (%)",
+                    "scale": { "scheme": "reds", "domain": [14, 19] },
+                    "legend": {
+                        "orient": "right",
+                        "offset": 40,
+                        "titleFontSize": 13,
+                        "labelFontSize": 12,
+                        "symbolSize": 180
+                    }
+                },
+                "tooltip": [
+                    { "field": "state_name", "type": "nominal", "title": "State" },
+                    { "field": "activity_rate", "type": "quantitative", "title": "Meeting guidelines (%)", "format": ".2f" }
+                ]
+            },
+            "config": { "view": { "stroke": null } }
+        };
+
+        const guidelinesSpec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "title": null,
+            "width": 450,
+            "height": 380,
+            "data": {
+                "values": [
+                    {"age_group": "2–5", "percent_inactive": 39},
+                    {"age_group": "5–12", "percent_inactive": 74},
+                    {"age_group": "13–14", "percent_inactive": 89},
+                    {"age_group": "15–17", "percent_inactive": 83},
+                    {"age_group": "18–64", "percent_inactive": 78}
+                ]
+            },
+            "mark": { "type": "line", "point": { "size": 70, "filled": true, "fill": "black" }, "strokeWidth": 3 },
+            "encoding": {
+                "x": { "field": "age_group", "type": "ordinal", "title": "Age group", "sort": ["2–5", "5–12", "13–14", "15–17", "18–64"] },
+                "y": { "field": "percent_inactive", "type": "quantitative", "title": "Inactive (%)", "scale": { "domain": [0, 100] }, "axis": { "format": "d" } },
+                "tooltip": [
+                    { "field": "age_group", "title": "Age group" },
+                    { "field": "percent_inactive", "title": "Inactive (%)", "format": "d" }
+                ],
+                "color": { "value": "#1f77b4" }
+            },
+            "config": { "view": { "stroke": null } }
+        };
+
+        const sedentarySpec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "width": 1000,
+            "height": 300,
+            "data": {
+                "url": "https://raw.githubusercontent.com/Nicoletta-111/Data-Visualisation-2/refs/heads/main/sedentary_behaviour.csv",
+                "format": { "type": "csv" }
+            },
+            "mark": { "type": "line", "point": { "filled": true, "size": 70 }, "strokeWidth": 3 },
+            "encoding": {
+                "x": { "field": "year", "type": "ordinal", "title": "Survey year", "sort": ["2007-2008", "2011-2012", "2014-2015"] },
+                "y": { "field": "percentage", "type": "quantitative", "title": "Adults (%)", "scale": { "domain": [30, 60] } },
+                "color": {
+                    "field": "sitting_type", "type": "nominal", "title": "Sedentary behaviour",
+                    "legend": { "titleFontSize": 12, "labelFontSize": 11, "symbolSize": 90 }
+                },
+                "tooltip": [
+                    { "field": "year", "title": "Year" },
+                    { "field": "sitting_type", "title": "Type" },
+                    { "field": "percentage", "title": "Percentage (%)", "format": ".1f" }
+                ]
+            },
+            "config": { "view": { "stroke": null } }
+        };
+
+        const activitiesSpec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "width": 900,
+            "height": 420,
+            "data": {
+                "url": "https://raw.githubusercontent.com/Nicoletta-111/Data-Visualisation-2/refs/heads/main/Free_time.csv",
+                "format": { "type": "csv" }
+            },
+            "transform": [{ "fold": ["Males", "Females"], "as": ["Sex", "Percentage"] }],
+            "mark": "bar",
+            "encoding": {
+                "y": { "field": "Activity", "type": "nominal", "title": null, "sort": "-x" },
+                "x": { "field": "Percentage", "type": "quantitative", "title": "Participation (%)" },
+                "color": {
+                    "field": "Sex", "type": "nominal",
+                    "scale": { "range": ["#5C95FF", "#F05D5E"] },
+                    "legend": { "titleFontSize": 12, "labelFontSize": 11 }
+                },
+                "yOffset": { "field": "Sex" },
+                "tooltip": [
+                    { "field": "Activity" },
+                    { "field": "Sex" },
+                    { "field": "Percentage", "format": ".1f" }
+                ]
+            },
+            "config": { "view": { "stroke": null } }
+        };
+
+        const tvSlopeSpec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "title": null,
+            "width": 400,
+            "height": 220,
+            "data": {
+                "values": [
+                    { "group": "Older adults (65+)", "year": "1992", "hours": 3.2 },
+                    { "group": "Older adults (65+)", "year": "2014", "hours": 5.0 },
+                    { "group": "Young adults (18–29)", "year": "2004", "hours": 2.1 },
+                    { "group": "Young adults (18–29)", "year": "2014", "hours": 1.8 }
+                ]
+            },
+            "mark": { "type": "line", "point": { "size": 90, "filled": true, "fill": "grey", "strokeWidth": 2 }, "strokeWidth": 3 },
+            "encoding": {
+                "x": { "field": "year", "type": "ordinal", "title": "Year", "axis": { "labelAngle": 0 } },
+                "y": { "field": "hours", "type": "quantitative", "title": "Daily TV (hours)", "scale": { "domain": [1, 6] } },
+                "color": {
+                    "field": "group", "type": "nominal", "title": "Age group",
+                    "scale": { "domain": ["Older adults (65+)", "Young adults (18–29)"], "range": ["#d95f02", "#1b9e77"] },
+                    "legend": { "titleFontSize": 11, "labelFontSize": 10, "orient": "bottom" }
+                },
+                "tooltip": [
+                    { "field": "group", "title": "Group" },
+                    { "field": "year", "title": "Year" },
+                    { "field": "hours", "title": "Hours", "format": ".1f" }
+                ]
+            },
+            "config": { "view": { "stroke": null } }
+        };
+
+        const kidsScreenSpec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "width": 250,
+            "height": 250,
+            "data": {
+                "values": [
+                    { "status": "Meet limits", "percentage": 29 },
+                    { "status": "Exceed limits", "percentage": 71 }
+                ]
+            },
+            "mark": { "type": "arc", "innerRadius": 0, "stroke": "white" },
+            "encoding": {
+                "theta": { "field": "percentage", "type": "quantitative" },
+                "color": {
+                    "field": "status", "type": "nominal",
+                    "scale": { "domain": ["Meet limits", "Exceed limits"], "range": ["#5C95FF", "#F05D5E"] },
+                    "legend": { "titleFontSize": 11, "labelFontSize": 10, "orient": "bottom" }
+                },
+                "tooltip": [
+                    { "field": "status", "title": "Compliance" },
+                    { "field": "percentage", "title": "Percentage (%)", "format": ".0f" }
+                ]
+            },
+            "config": { "view": { "stroke": null } }
+        };
+
+        const workSpec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "title": null,
+            "width": 425,
+            "height": 350,
+            "data": {
+                "url": "https://raw.githubusercontent.com/Nicoletta-111/Data-Visualisation-2/main/Type_of_activity_at_work.csv",
+                "format": { "type": "csv" }
+            },
+            "mark": "bar",
+            "encoding": {
+                "x": { "field": "Age", "type": "ordinal", "title": "Age group", "sort": ["18-24", "25-34", "35-44", "45-54", "55-64"] },
+                "y": { "field": "Percentage", "type": "quantitative", "title": "Proportion of employed (%)", "stack": "normalize", "axis": { "format": "%" } },
+                "color": {
+                    "field": "Type", "type": "nominal", "title": "Workday activity",
+                    "scale": { "scheme": "set2" },
+                    "legend": { "titleFontSize": 12, "labelFontSize": 11, "symbolSize": 100 }
+                },
+                "tooltip": [
+                    { "field": "Age", "title": "Age group" },
+                    { "field": "Type", "title": "Activity" },
+                    { "field": "Percentage", "title": "Percentage (%)", "format": ".1f" }
+                ]
+            },
+            "config": { "view": { "stroke": null } }
+        };
+
+        const barriersDiffSpec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "title": null,
+            "width": 425,
+            "height": 350,
+            "data": {
+                "url": "https://raw.githubusercontent.com/Nicoletta-111/Data-Visualisation-2/main/barriers.csv",
+                "format": { "type": "csv" }
+            },
+            "transform": [{ "calculate": "datum.female_percent - datum.male_percent", "as": "difference" }],
+            "mark": "bar",
+            "encoding": {
+                "y": { "field": "barrier", "type": "nominal", "title": null, "sort": "-x" },
+                "x": { "field": "difference", "type": "quantitative", "title": "Difference (Female – Male %)", "axis": { "format": ".1f" } },
+                "color": { "condition": { "test": "datum.difference > 0", "value": "#d95f02" }, "value": "#1f77b4" },
+                "tooltip": [
+                    { "field": "barrier", "title": "Barrier" },
+                    { "field": "male_percent", "title": "Male (%)" },
+                    { "field": "female_percent", "title": "Female (%)" },
+                    { "field": "difference", "title": "Difference", "format": ".1f" }
+                ]
+            },
+            "config": { "view": { "stroke": null } }
+        };
+
+        const burdenSpec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "title": null,
+            "width": 500,
+            "height": 300,
+            "data": {
+                "url": "https://raw.githubusercontent.com/Nicoletta-111/Data-Visualisation-2/refs/heads/main/diseases.csv",
+                "format": { "type": "csv" }
+            },
+            "mark": { "type": "bar", "color": "steelblue" },
+            "encoding": {
+                "y": { "field": "disease", "type": "nominal", "title": null, "sort": "-x" },
+                "x": { "field": "percent", "type": "quantitative", "title": "Burden attributable (%)", "axis": { "format": ".1f" } },
+                "tooltip": [
+                    { "field": "disease", "title": "Disease" },
+                    { "field": "percent", "title": "Burden (%)", "format": ".1f" }
+                ]
+            },
+            "config": { "view": { "stroke": null } }
+        };
+
+        const impactSpec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "width": 500,
+            "height": 300,
+            "data": {
+                "url": "https://raw.githubusercontent.com/Nicoletta-111/Data-Visualisation-2/refs/heads/main/inactivity_impact.csv",
+                "format": { "type": "csv" }
+            },
+            "transform": [{ "fold": ["current", "after_reduction"], "as": ["Scenario", "Value"] }],
+            "mark": "bar",
+            "encoding": {
+                "x": { "field": "metric", "type": "nominal", "title": null, "axis": { "labelAngle": 0 } },
+                "y": { "field": "Value", "type": "quantitative", "title": "Annual people affected" },
+                "color": {
+                    "field": "Scenario", "type": "nominal", "title": null,
+                    "scale": { "domain": ["current", "after_reduction"], "range": ["#d95f02", "#1b9e77"] },
+                    "legend": { "titleFontSize": 11, "labelFontSize": 10, "orient": "top-right" }
+                },
+                "xOffset": { "field": "Scenario" },
+                "tooltip": [
+                    { "field": "metric" },
+                    { "field": "Scenario" },
+                    { "field": "Value", "format": ",.0f" }
+                ]
+            },
+            "config": { "view": { "stroke": null } }
+        };
+
+        vegaEmbed('#chart-map', mapSpec);
+        vegaEmbed('#chart-guidelines', guidelinesSpec);
+        vegaEmbed('#chart-sedentary', sedentarySpec);
+        vegaEmbed('#chart-activities', activitiesSpec);
+        vegaEmbed('#chart-tv-slope', tvSlopeSpec);
+        vegaEmbed('#chart-kids-screen', kidsScreenSpec);
+        vegaEmbed('#chart-work', workSpec);
+        vegaEmbed('#chart-barriers-diff', barriersDiffSpec);
+        vegaEmbed('#chart-burden', burdenSpec);
+        vegaEmbed('#chart-impact', impactSpec);
+    </script>
+</body>
+</html>
